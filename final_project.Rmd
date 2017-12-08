@@ -18,8 +18,10 @@ hos <- hos %>%
   
 
 unique_visit <- hos %>% 
-  group_by(patientid) 
+  group_by(patientid) %>% 
+  distinct(patientid)
 
 
+           
 ```
 
