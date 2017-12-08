@@ -10,6 +10,7 @@ library(readr)
 library(readxl)
 library(janitor)
 library(tidyverse)
+library(pander)
 hos = read_excel("./data/GHProject_Dataset.xlsx") 
 
 hos <- hos %>% 
@@ -17,11 +18,49 @@ hos <- hos %>%
   select(patientid, visitid, admitdtm, losdays2, is30dayreadmit, mews, cindex, evisit, icu_flag, ageyear, gender, race, religion, maritalstatus, insurancetype, bmi:bpdiastolic)
   
 
-unique_visit <- hos %>% 
-  group_by(patientid) %>% 
-  distinct(patientid)
+
+ unique_visit <- hos %>% 
+   group_by(patientid) %>% 
+   filter(!duplicated(patientid))
+
+hos_tidy <- unique_visit
+
+summary_losdays2 = hos_tidy %>% 
+  ungroup(patientid) %>% 
+  dplyr::select(losdays2) %>%
+  summarize( variable = names(.),
+  n_observation = n(),
+  mean = mean(losdays2),
+  SD = sd(losdays2),
+  minimum = min(losdays2),
+  maximum = max(losdays2),
+  median = median(losdays2))
+
+summary_ageyear = hos_tidy %>% 
+  ungroup(patientid) %>% 
+  dplyr::select(ageyear) %>%
+  summarize( variable = names(.),
+  n_observation = n(),
+  mean = mean(ageyear),
+  SD = sd(ageyear),
+  minimum = min(ageyear),
+  maximum = max(ageyear),
+  median = median(ageyear))
+
+summary_evisit = hos_tidy %>% 
+  ungroup(patientid) %>% 
+  dplyr::select(evisit) %>%
+  summarize( variable = names(.),
+  n_observation = n(),
+  mean = mean(evisit),
+  SD = sd(evisit),
+  minimum = min(evisit),
+  maximum = max(evisit),
+  median = median(evisit))
 
 
+ summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
+ pander(summary)
            
 ```
 
