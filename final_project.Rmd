@@ -26,8 +26,6 @@ unique_visit <- hos %>%
 ```
 
 ```{r second}
-library(dummies)
-
 hos %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram()
@@ -35,5 +33,9 @@ hos %>%
 y = log(hos$losdays2)
 
 hos$gender = ifelse(hos$gender == "Male", 1, ifelse(hos$gender == "Female", 0, NA))
+
+hos$race = ifelse(hos$race == "White", 0, ifelse(hos$race == "African Amer/Black", 1, ifelse(hos$race == "Asian", 2, ifelse(hos$race == "Native Amer/Alaskan", 3, ifelse(hos$race == "Natv Hawaii/Pacf Isl", 4, ifelse(hos$race == "Other/Multiracial", 5, NA))))))
+
+hos$insurancetype = ifelse(hos$insurancetype == "Medicare", 0, ifelse(hos$insurancetype == "Medicaid", 1, ifelse(hos$insurancetype == "Private", 2, ifelse(hos$insurancetype == "NA", 3, NA))))
 ```
 
