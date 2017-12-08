@@ -26,10 +26,14 @@ unique_visit <- hos %>%
 ```
 
 ```{r second}
-unique_visit %>%
+library(dummies)
+
+hos %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram()
 
-y = log(unique_visit$losdays2)
+y = log(hos$losdays2)
+
+hos$gender = ifelse(hos$gender == "Male", 1, ifelse(hos$gender == "Female", 0, NA))
 ```
 
