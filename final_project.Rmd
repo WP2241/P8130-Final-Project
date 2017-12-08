@@ -37,3 +37,28 @@ y = log(hos$losdays2)
 hos$gender = ifelse(hos$gender == "Male", 1, ifelse(hos$gender == "Female", 0, NA))
 ```
 
+### Stepwise selection
+```{r Ginny}
+mult.fit <- lm(life_exp ~ log(population) + income + log(illiteracy) + murder + hs_grad + frost + log(area), data=state)
+step(mult.fit, direction="both")
+```
+
+### Criterion-based procedures
+```{r Ginny}
+state = state %>%
+  mutate(logpopulation = log(population),
+         logilliteracy = log(illiteracy),
+         logarea = log(area))
+mult.fit2 <- lm(life_exp ~ logpopulation + income + logilliteracy + murder + hs_grad + frost + logarea, data=state)
+best <- function(model, ...) 
+{
+  subsets <- regsubsets(formula(model), model.frame(model), ...)
+  subsets <- with(summary(subsets),
+                  cbind(p = as.numeric(rownames(which)), which, rss, rsq, adjr2, cp, bic))
+  
+  return(subsets)
+}  
+
+best(mult.fit2, nbest = 1)
+```
+
