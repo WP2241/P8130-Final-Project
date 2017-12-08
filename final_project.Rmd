@@ -1,0 +1,25 @@
+---
+title: "FinalProject"
+author: "Hyewon Choi"
+date: "12/8/2017"
+output: html_document
+---
+
+```{r first}
+library(readr)
+library(readxl)
+library(janitor)
+library(tidyverse)
+hos = read_excel("./data/GHProject_Dataset.xlsx") 
+
+hos <- hos %>% 
+  clean_names() %>% 
+  select(patientid, visitid, admitdtm, losdays2, is30dayreadmit, mews, cindex, evisit, icu_flag, ageyear, gender, race, religion, maritalstatus, insurancetype, bmi:bpdiastolic)
+  
+
+unique_visit <- hos %>% 
+  group_by(patientid) 
+
+
+```
+

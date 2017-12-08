@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"FinalProject\"\nauthor: \"Hyewon Choi\"\ndate: \"12/8/2017\"\noutput: html_document\n---\n\n```{r first}\nlibrary(readr)\nlibrary(readxl)\nlibrary(janitor)\nlibrary(tidyverse)\nhos = read_excel(\"./data/GHProject_Dataset.xlsx\") \n\nhos <- hos %>% \n  clean_names() %>% \n  select(patientid, visitid, admitdtm, losdays2, is30dayreadmit, mews, cindex, evisit, icu_flag, ageyear, gender, race, religion, maritalstatus, insurancetype, bmi:bpdiastolic)\n  \n\nunique_visit <- hos %>% \n  group_by(patientid) %>% \n  distinct(patientid)\n\n\nunique_visit <- hos %>% \n  group_by(patientid) %>% \n  mutate(rank_id = min_rank(patientid)) %>% \n  filter(rank_id == 1)\n           \n\n\n```\n\n",
+    "created" : 1512756988480.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2015567977",
+    "id" : "62F028D8",
+    "lastKnownWriteTime" : 1512757457,
+    "last_content_update" : 1512758455514,
+    "path" : "~/P8130-Final-Project/final_project.Rmd",
+    "project_path" : "final_project.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
