@@ -1,0 +1,19 @@
+---
+title: "P8130 Final Project"
+author: "Weixin Peng"
+date: "12/8/2017"
+output: html_document
+---
+```{r}
+library(readxl)
+library(dplyr)
+library(tidyverse)
+```
+
+
+```{r}
+data = read_excel("./data/GHProject_Dataset.xlsx") %>%
+  janitor::clean_names()
+```
+
+
