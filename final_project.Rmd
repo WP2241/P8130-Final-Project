@@ -23,3 +23,11 @@ unique_visit <- hos %>%
 
 ```
 
+```{r second}
+unique_visit %>%
+  ggplot(aes(x = losdays2)) + 
+    geom_histogram()
+
+y = log(unique_visit$losdays2)
+```
+
