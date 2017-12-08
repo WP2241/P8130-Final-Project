@@ -95,18 +95,36 @@ hos_dummies = hos_dummies %>%
 ### "Medicaid" is (0,1,0)
 ### "Private" is (0,0,1)
 
+
+hos_dummies = hos_tidy %>%
+  mutate(single = ifelse(maritalstatus == "Single", "1", "0"),
+         married = ifelse(race == "Married", "1", "0"),
+         widowed = ifelse(race == "Widowed", "1", "0"),
+         divorced = ifelse(race == "Divorced", "1", "0"),
+         separated = ifelse(race == "Separated", "1", "0"),
+         civil_union = ifelse(race == "Civil Union", "1", "0"))
+### "NA" is (0,0,0,0,0,0)
+### "single" is (1,0,0,0,0,0)
+### "married" is (0,1,0,0,0,0)
+### "widowed" is (0,0,1,0,0,0)
+### "divorced" is (0,0,0,1,0,0)
+### "separated" is (0,0,0,0,1,0)
+### "civil_union" is (0,0,0,0,0,1)
+
+
+
 hos_dummies = hos_dummies %>%
   mutate(log_losdays2 = log(losdays2))
 ```
 
 ### Stepwise selection
-```{r Ginny}
-mult.fit <- lm(life_exp ~ log(population) + income + log(illiteracy) + murder + hs_grad + frost + log(area), data=state)
+```{r Stepwise selection}
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + news + cindex + evisit + icu_flag + ageyear + gender + , data=state)
 step(mult.fit, direction="both")
 ```
 
 ### Criterion-based procedures
-```{r Ginny}
+```{r criterion}
 state = state %>%
   mutate(logpopulation = log(population),
          logilliteracy = log(illiteracy),
