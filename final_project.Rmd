@@ -73,9 +73,27 @@ y = log(hos_tidy$losdays2)
 
 hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
-hos_tidy$race = ifelse(hos_tidy$race == "White", 0, ifelse(hos_tidy$race == "African Amer/Black", 1, ifelse(hos_tidy$race == "Asian", 2, ifelse(hos_tidy$race == "Native Amer/Alaskan", 3, ifelse(hos_tidy$race == "Natv Hawaii/Pacf Isl", 4, ifelse(hos_tidy$race == "Other/Multiracial", 5, NA))))))
+                                                                    hos_dummies = hos_tidy %>%
+  mutate(white = ifelse(race == "White", "1", "0"),
+         black = ifelse(race == "African Amer/Black", "1", "0"),
+         asian = ifelse(race == "Asian", "1", "0"),
+         natv_amer_alaskan = ifelse(race == "Native Amer/Alaskan", "1", "0"),
+         natv_hawaii_pacf_isl = ifelse(race == "Natv Hawaii/Pacf Isl", "1", "0"))
+### "Others" is (0,0,0,0,0)
+### "White" is (1,0,0,0,0)
+### "Black" is (0,1,0,0,0)
+### "Asian" is (0,0,1,0,0)
+### "Native Amer/Alaskan" is (0,0,0,1,0)
+### "Natv Hawaii/Pacf Isl" is (0,0,0,0,1)
 
-hos_tidy$insurancetype = ifelse(hos_tidy$insurancetype == "Medicare", 0, ifelse(hos_tidy$insurancetype == "Medicaid", 1, ifelse(hos_tidy$insurancetype == "Private", 2, ifelse(hos_tidy$insurancetype == "NA", 3, NA))))
+hos_dummies = hos_dummies %>%
+  mutate(medicare = ifelse(insurancetype == "Medicare", "1", "0"),
+         medicaid = ifelse(insurancetype == "Medicaid", "1", "0"),
+         private = ifelse(insurancetype == "Private", "1", "0"))
+### "NA" is (0,0,0)
+### "Medicare" is (1,0,0)
+### "Medicaid" is (0,1,0)
+### "Private" is (0,0,1)                                               
 ```
 
 ### Stepwise selection
