@@ -96,7 +96,7 @@ hos_dummies = hos_dummies %>%
 ### "Private" is (0,0,1)
 
 
-hos_dummies = hos_tidy %>%
+hos_dummies = hos_dummies %>%
   mutate(single = ifelse(maritalstatus == "Single", "1", "0"),
          married = ifelse(race == "Married", "1", "0"),
          widowed = ifelse(race == "Widowed", "1", "0"),
@@ -119,7 +119,7 @@ hos_dummies = hos_dummies %>%
 
 ### Stepwise selection
 ```{r Stepwise selection}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + news + cindex + evisit + icu_flag + ageyear + gender + , data=state)
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + mews + cindex + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
 step(mult.fit, direction="both")
 ```
 
