@@ -69,7 +69,7 @@ hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram()
 
-y = log(hos_tidy$losdays2)
+hist(log(hos_tidy$losdays2))
 
 hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
@@ -93,7 +93,10 @@ hos_dummies = hos_dummies %>%
 ### "NA" is (0,0,0)
 ### "Medicare" is (1,0,0)
 ### "Medicaid" is (0,1,0)
-### "Private" is (0,0,1)                                               
+### "Private" is (0,0,1)
+
+hos_dummies = hos_dummies %>%
+  mutate(log_losdays2 = log(losdays2))
 ```
 
 ### Stepwise selection
