@@ -64,17 +64,17 @@ summary_evisit = hos_tidy %>%
            
 ```
 
-```{r second}
-hos %>%
+```{r Kathryn}
+hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram()
 
-y = log(hos$losdays2)
+y = log(hos_tidy$losdays2)
 
-hos$gender = ifelse(hos$gender == "Male", 1, ifelse(hos$gender == "Female", 0, NA))
+hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
-hos$race = ifelse(hos$race == "White", 0, ifelse(hos$race == "African Amer/Black", 1, ifelse(hos$race == "Asian", 2, ifelse(hos$race == "Native Amer/Alaskan", 3, ifelse(hos$race == "Natv Hawaii/Pacf Isl", 4, ifelse(hos$race == "Other/Multiracial", 5, NA))))))
+hos_tidy$race = ifelse(hos_tidy$race == "White", 0, ifelse(hos_tidy$race == "African Amer/Black", 1, ifelse(hos_tidy$race == "Asian", 2, ifelse(hos_tidy$race == "Native Amer/Alaskan", 3, ifelse(hos_tidy$race == "Natv Hawaii/Pacf Isl", 4, ifelse(hos_tidy$race == "Other/Multiracial", 5, NA))))))
 
-hos$insurancetype = ifelse(hos$insurancetype == "Medicare", 0, ifelse(hos$insurancetype == "Medicaid", 1, ifelse(hos$insurancetype == "Private", 2, ifelse(hos$insurancetype == "NA", 3, NA))))
+hos_tidy$insurancetype = ifelse(hos_tidy$insurancetype == "Medicare", 0, ifelse(hos_tidy$insurancetype == "Medicaid", 1, ifelse(hos_tidy$insurancetype == "Private", 2, ifelse(hos_tidy$insurancetype == "NA", 3, NA))))
 ```
 
