@@ -69,11 +69,9 @@ hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram()
 
-hist(log(hos_tidy$losdays2))
-
 hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
-                                                                    hos_dummies = hos_tidy %>%
+hos_dummies = hos_tidy %>%
   mutate(white = ifelse(race == "White", "1", "0"),
          black = ifelse(race == "African Amer/Black", "1", "0"),
          asian = ifelse(race == "Asian", "1", "0"),
@@ -114,13 +112,23 @@ hos_dummies = hos_dummies %>%
 
 
 hos_dummies = hos_dummies %>%
-  mutate(log_losdays2 = log(losdays2))
+  mutate(log_losdays2 = log(losdays2)) 
 ```
-
+  
 ### Stepwise selection
 ```{r Stepwise selection}
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + mews + cindex + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
 step(mult.fit, direction="both")
+
+#mews score based on bp, respiration, heartrate & temp
+#is a less significant variable than bp, resp $ temp therefore omitted 
+
+#also only included the more significant of the two bp readings
+
+#of all the dummy variables, only insurancetype was significant
+
+test = lm(log_losdays2 ~ is30dayreadmit + cindex + evisit + ageyear + medicare + medicaid + respirationrate + heartrate + bpdiastolic, data = hos_dummies)
+summary(test)
 ```
 
 ### Criterion-based procedures
