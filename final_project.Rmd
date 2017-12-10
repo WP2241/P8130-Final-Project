@@ -5,6 +5,7 @@ date: "12/8/2017"
 output: html_document
 ---
 
+#Loading the data, observing duplicates
 ```{r load libraries & data}
 library(readr)
 library(readxl)
@@ -14,6 +15,17 @@ library(pander)
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
 
+duplicates = data.frame(table(hos$PatientID)) 
+
+duplicates = duplicates[duplicates$Freq > 1,] %>%
+  rename(PatientID = Var1)
+#69 patients visited the hospital more than once, 68 visited twice and 1 visited three times
+
+hos_duplicates = merge(duplicates, hos)
+```
+
+#Tidying the data
+```{r tidy data}
 hos_tidy <- hos %>% 
   clean_names() %>%
   select(-loshours, -postalcode, -facilityname, -facilityzip) %>%
@@ -22,6 +34,7 @@ hos_tidy <- hos %>%
   ungroup(patientid)
 ```
 
+#Summary Statistics
 ```{r summary statistics}
 summary_losdays2 = hos_tidy %>% 
   select(losdays2) %>%
@@ -55,6 +68,7 @@ summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
 pander(summary)
 ```
 
+#Data observations & building dummies
 ```{r observing data & building dummies}
 hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
