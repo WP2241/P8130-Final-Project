@@ -5,70 +5,64 @@ date: "12/8/2017"
 output: html_document
 ---
 
-```{r first}
+```{r load libraries & data}
 library(readr)
 library(readxl)
 library(janitor)
 library(tidyverse)
 library(pander)
-hos = read_excel("./data/GHProject_Dataset.xlsx") 
 
-hos <- hos %>% 
-  clean_names() %>% 
-  select(patientid, visitid, admitdtm, losdays2, is30dayreadmit, mews, cindex, evisit, icu_flag, ageyear, gender, race, religion, maritalstatus, insurancetype, bmi:bpdiastolic)
-  
+hos = read_excel("./data/GHProject_Dataset.xlsx")
 
-
- unique_visit <- hos %>% 
-   group_by(patientid) %>% 
-   filter(!duplicated(patientid))
-
-hos_tidy <- unique_visit
-
-summary_losdays2 = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(losdays2) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(losdays2),
-  SD = sd(losdays2),
-  minimum = min(losdays2),
-  maximum = max(losdays2),
-  median = median(losdays2))
-
-summary_ageyear = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(ageyear) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(ageyear),
-  SD = sd(ageyear),
-  minimum = min(ageyear),
-  maximum = max(ageyear),
-  median = median(ageyear))
-
-summary_evisit = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(evisit) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(evisit),
-  SD = sd(evisit),
-  minimum = min(evisit),
-  maximum = max(evisit),
-  median = median(evisit))
-
-
- summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
- pander(summary)
-           
+hos_tidy <- hos %>% 
+  clean_names() %>%
+  select(-loshours, -postalcode, -facilityname, -facilityzip) %>%
+  group_by(patientid) %>% 
+  filter(!duplicated(patientid)) %>%
+  ungroup(patientid)
 ```
 
-```{r Kathryn}
+```{r summary statistics}
+summary_losdays2 = hos_tidy %>% 
+  select(losdays2) %>%
+  summarize(variable = names(.), 
+            n = n(), mean = mean(losdays2), 
+            sd = sd(losdays2), 
+            minimum = min(losdays2), 
+            maximum = max(losdays2), 
+            median = median(losdays2))
+
+summary_ageyear = hos_tidy %>% 
+  select(ageyear) %>%
+  summarize(variable = names(.), n = n(), 
+            mean = mean(ageyear),
+            sd = sd(ageyear),
+            minimum = min(ageyear),
+            maximum = max(ageyear),
+            median = median(ageyear))
+
+summary_evisit = hos_tidy %>% 
+  select(evisit) %>%
+  summarize(variable = names(.),
+            n = n(),
+            mean = mean(evisit),
+            sd = sd(evisit),
+            minimum = min(evisit),
+            maximum = max(evisit),
+            median = median(evisit))
+
+summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
+pander(summary)
+```
+
+```{r observing data & building dummies}
 hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
-    geom_histogram()
-
+    geom_histogram() +
+    labs(title = "Figure 1: Length of Stay",
+         x = "Length of Stay (Days)",
+         y = "Count")
+  
 hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
 hos_dummies = hos_tidy %>%
@@ -83,6 +77,7 @@ hos_dummies = hos_tidy %>%
 ### "Asian" is (0,0,1,0,0)
 ### "Native Amer/Alaskan" is (0,0,0,1,0)
 ### "Natv Hawaii/Pacf Isl" is (0,0,0,0,1)
+
 
 hos_dummies = hos_dummies %>%
   mutate(medicare = ifelse(insurancetype == "Medicare", "1", "0"),
@@ -108,7 +103,6 @@ hos_dummies = hos_dummies %>%
 ### "divorced" is (0,0,0,1,0,0)
 ### "separated" is (0,0,0,0,1,0)
 ### "civil_union" is (0,0,0,0,0,1)
-
 
 
 hos_dummies = hos_dummies %>%
