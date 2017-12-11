@@ -105,11 +105,11 @@ hos_dummies = hos_dummies %>%
 
 hos_dummies = hos_dummies %>%
   mutate(single = ifelse(maritalstatus == "Single", "1", "0"),
-         married = ifelse(race == "Married", "1", "0"),
-         widowed = ifelse(race == "Widowed", "1", "0"),
-         divorced = ifelse(race == "Divorced", "1", "0"),
-         separated = ifelse(race == "Separated", "1", "0"),
-         civil_union = ifelse(race == "Civil Union", "1", "0"))
+         married = ifelse(maritalstatus == "Married", "1", "0"),
+         widowed = ifelse(maritalstatus == "Widowed", "1", "0"),
+         divorced = ifelse(maritalstatus == "Divorced", "1", "0"),
+         separated = ifelse(maritalstatus == "Separated", "1", "0"),
+         civil_union = ifelse(maritalstatus == "Civil Union", "1", "0"))
 ### "NA" is (0,0,0,0,0,0)
 ### "single" is (1,0,0,0,0,0)
 ### "married" is (0,1,0,0,0,0)
@@ -120,23 +120,19 @@ hos_dummies = hos_dummies %>%
 
 
 hos_dummies = hos_dummies %>%
-  mutate(log_losdays2 = log(losdays2)) 
+  mutate(log_losdays2 = log(losdays2)) %>%
+  select(-race, -insurancetype, -maritalstatus)
 ```
   
 ### Stepwise selection
 ```{r Stepwise selection}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + mews + cindex + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
-step(mult.fit, direction="both")
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + cindex + mews + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_dummies) 
 
-#mews score based on bp, respiration, heartrate & temp
-#is a less significant variable than bp, resp $ temp therefore omitted 
+step(mult.fit, direction = 'backward')
 
-#also only included the more significant of the two bp readings
-
+#mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
+#the two bp readings are correlated, diastolic is more significant
 #of all the dummy variables, only insurancetype was significant
-
-test = lm(log_losdays2 ~ is30dayreadmit + cindex + evisit + ageyear + medicare + medicaid + respirationrate + heartrate + bpdiastolic, data = hos_dummies)
-summary(test)
 ```
 
 ### Criterion-based procedures
