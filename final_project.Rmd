@@ -12,6 +12,7 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 library(pander)
+library(leaps)
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
 
@@ -123,30 +124,49 @@ hos_dummies = hos_dummies %>%
   mutate(log_losdays2 = log(losdays2)) %>%
   select(-race, -insurancetype, -maritalstatus)
 ```
+
+```{r omit na}
+fill_na = function(x) {
+  if (is.numeric(x)){
+   mean = mean(x, na.rm = TRUE)
+   x = replace(x, is.na(x), mean)
+  } else {x = x} 
+    
+  return(x)
+}
+
+hos_tidy_omitna = map_df(hos_tidy, fill_na)
+
+
+```
+
   
 ### Stepwise selection
 ```{r Stepwise selection}
-<<<<<<< HEAD
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
-step(mult.fit, direction="both")
-=======
+hos_tidy_omitna = hos_tidy_omitna %>%
+  mutate(log_losdays2 = log(losdays2)) %>%
+  na.omit()
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+
+step(mult.fit, direction = 'both') 
+
+```
+
+```{r}
+
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + cindex + mews + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_dummies) 
 
-step(mult.fit, direction = 'backward')
+step(mult.fit, direction = 'backwards')
 
 #mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
 #the two bp readings are correlated, diastolic is more significant
 #of all the dummy variables, only insurancetype was significant
->>>>>>> 33ed994cc531697aed3ed9fc41fb84d7bda57c28
+
 ```
 
 ### Criterion-based procedures
 ```{r criterion}
-state = state %>%
-  mutate(logpopulation = log(population),
-         logilliteracy = log(illiteracy),
-         logarea = log(area))
-mult.fit2 <- lm(life_exp ~ logpopulation + income + logilliteracy + murder + hs_grad + frost + logarea, data=state)
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
 best <- function(model, ...) 
 {
   subsets <- regsubsets(formula(model), model.frame(model), ...)
@@ -156,6 +176,6 @@ best <- function(model, ...)
   return(subsets)
 }  
 
-best(mult.fit2, nbest = 1)
+best(mult.fit, nbest = 1)
 ```
 
