@@ -146,7 +146,7 @@ hos_tidy_omitna = map_df(hos_tidy, fill_na)
 hos_tidy_omitna = hos_tidy_omitna %>%
   mutate(log_losdays2 = log(losdays2)) %>%
   na.omit()
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + evisit+ cindex + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
 
 step(mult.fit, direction = 'both') 
 
@@ -166,7 +166,7 @@ step(mult.fit, direction = 'backwards')
 
 ### Criterion-based procedures
 ```{r criterion}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
 best <- function(model, ...) 
 {
   subsets <- regsubsets(formula(model), model.frame(model), ...)
