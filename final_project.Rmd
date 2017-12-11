@@ -119,7 +119,7 @@ hos_dummies = hos_dummies %>%
 
 ### Stepwise selection
 ```{r Stepwise selection}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + mews + cindex + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
 step(mult.fit, direction="both")
 ```
 
