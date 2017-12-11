@@ -5,75 +5,81 @@ date: "12/8/2017"
 output: html_document
 ---
 
-```{r first}
+#Loading the data, observing duplicates
+```{r load libraries & data}
 library(readr)
 library(readxl)
 library(janitor)
 library(tidyverse)
 library(pander)
-hos = read_excel("./data/GHProject_Dataset.xlsx") 
 
-hos <- hos %>% 
-  clean_names() %>% 
-  select(patientid, visitid, admitdtm, losdays2, is30dayreadmit, mews, cindex, evisit, icu_flag, ageyear, gender, race, religion, maritalstatus, insurancetype, bmi:bpdiastolic)
-  
+hos = read_excel("./data/GHProject_Dataset.xlsx")
 
+duplicates = data.frame(table(hos$PatientID)) 
 
- unique_visit <- hos %>% 
-   group_by(patientid) %>% 
-   filter(!duplicated(patientid))
+duplicates = duplicates[duplicates$Freq > 1,] %>%
+  rename(PatientID = Var1)
+#69 patients visited the hospital more than once, 68 visited twice and 1 visited three times
 
-hos_tidy <- unique_visit
-
-summary_losdays2 = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(losdays2) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(losdays2),
-  SD = sd(losdays2),
-  minimum = min(losdays2),
-  maximum = max(losdays2),
-  median = median(losdays2))
-
-summary_ageyear = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(ageyear) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(ageyear),
-  SD = sd(ageyear),
-  minimum = min(ageyear),
-  maximum = max(ageyear),
-  median = median(ageyear))
-
-summary_evisit = hos_tidy %>% 
-  ungroup(patientid) %>% 
-  dplyr::select(evisit) %>%
-  summarize( variable = names(.),
-  n_observation = n(),
-  mean = mean(evisit),
-  SD = sd(evisit),
-  minimum = min(evisit),
-  maximum = max(evisit),
-  median = median(evisit))
-
-
- summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
- pander(summary)
-           
+hos_duplicates = merge(duplicates, hos)
 ```
 
-```{r Kathryn}
+#Tidying the data
+```{r tidy data}
+hos_tidy <- hos %>% 
+  clean_names() %>%
+  select(-loshours, -postalcode, -facilityname, -facilityzip) %>%
+  group_by(patientid) %>% 
+  filter(!duplicated(patientid)) %>%
+  ungroup(patientid)
+```
+
+#Summary Statistics
+```{r summary statistics}
+summary_losdays2 = hos_tidy %>% 
+  select(losdays2) %>%
+  summarize(variable = names(.), 
+            n = n(), mean = mean(losdays2), 
+            sd = sd(losdays2), 
+            minimum = min(losdays2), 
+            maximum = max(losdays2), 
+            median = median(losdays2))
+
+summary_ageyear = hos_tidy %>% 
+  select(ageyear) %>%
+  summarize(variable = names(.), n = n(), 
+            mean = mean(ageyear),
+            sd = sd(ageyear),
+            minimum = min(ageyear),
+            maximum = max(ageyear),
+            median = median(ageyear))
+
+summary_evisit = hos_tidy %>% 
+  select(evisit) %>%
+  summarize(variable = names(.),
+            n = n(),
+            mean = mean(evisit),
+            sd = sd(evisit),
+            minimum = min(evisit),
+            maximum = max(evisit),
+            median = median(evisit))
+
+summary = rbind(summary_losdays2, summary_ageyear, summary_evisit)
+pander(summary)
+```
+
+#Data observations & building dummies
+```{r observing data & building dummies}
 hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
-    geom_histogram()
-
-hist(log(hos_tidy$losdays2))
-
+    geom_histogram() +
+    labs(title = "Figure 1: Length of Stay",
+         x = "Length of Stay (Days)",
+         y = "Count")
+  
 hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender == "Female", 0, NA))
 
-                                                                    hos_dummies = hos_tidy %>%
+hos_dummies = hos_tidy %>%
   mutate(white = ifelse(race == "White", "1", "0"),
          black = ifelse(race == "African Amer/Black", "1", "0"),
          asian = ifelse(race == "Asian", "1", "0"),
@@ -85,6 +91,7 @@ hos_tidy$gender = ifelse(hos_tidy$gender == "Male", 1, ifelse(hos_tidy$gender ==
 ### "Asian" is (0,0,1,0,0)
 ### "Native Amer/Alaskan" is (0,0,0,1,0)
 ### "Natv Hawaii/Pacf Isl" is (0,0,0,0,1)
+
 
 hos_dummies = hos_dummies %>%
   mutate(medicare = ifelse(insurancetype == "Medicare", "1", "0"),
@@ -98,11 +105,11 @@ hos_dummies = hos_dummies %>%
 
 hos_dummies = hos_dummies %>%
   mutate(single = ifelse(maritalstatus == "Single", "1", "0"),
-         married = ifelse(race == "Married", "1", "0"),
-         widowed = ifelse(race == "Widowed", "1", "0"),
-         divorced = ifelse(race == "Divorced", "1", "0"),
-         separated = ifelse(race == "Separated", "1", "0"),
-         civil_union = ifelse(race == "Civil Union", "1", "0"))
+         married = ifelse(maritalstatus == "Married", "1", "0"),
+         widowed = ifelse(maritalstatus == "Widowed", "1", "0"),
+         divorced = ifelse(maritalstatus == "Divorced", "1", "0"),
+         separated = ifelse(maritalstatus == "Separated", "1", "0"),
+         civil_union = ifelse(maritalstatus == "Civil Union", "1", "0"))
 ### "NA" is (0,0,0,0,0,0)
 ### "single" is (1,0,0,0,0,0)
 ### "married" is (0,1,0,0,0,0)
@@ -112,15 +119,25 @@ hos_dummies = hos_dummies %>%
 ### "civil_union" is (0,0,0,0,0,1)
 
 
-
 hos_dummies = hos_dummies %>%
-  mutate(log_losdays2 = log(losdays2))
+  mutate(log_losdays2 = log(losdays2)) %>%
+  select(-race, -insurancetype, -maritalstatus)
 ```
-
+  
 ### Stepwise selection
 ```{r Stepwise selection}
+<<<<<<< HEAD
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data=hos_dummies)
 step(mult.fit, direction="both")
+=======
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + cindex + mews + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_dummies) 
+
+step(mult.fit, direction = 'backward')
+
+#mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
+#the two bp readings are correlated, diastolic is more significant
+#of all the dummy variables, only insurancetype was significant
+>>>>>>> 33ed994cc531697aed3ed9fc41fb84d7bda57c28
 ```
 
 ### Criterion-based procedures
