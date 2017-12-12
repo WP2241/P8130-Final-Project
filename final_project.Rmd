@@ -153,10 +153,10 @@ step(mult.fit, direction = 'both')
 ```
 
 ```{r}
-
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + cindex + mews + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_dummies) 
 
-step(mult.fit, direction = 'backwards')
+z = step(mult.fit, direction = "both")
+summary(z)
 
 #mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
 #the two bp readings are correlated, diastolic is more significant
@@ -167,6 +167,7 @@ step(mult.fit, direction = 'backwards')
 ### Criterion-based procedures
 ```{r criterion}
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+
 best <- function(model, ...) 
 {
   subsets <- regsubsets(formula(model), model.frame(model), ...)
