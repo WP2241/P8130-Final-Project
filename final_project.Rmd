@@ -147,19 +147,13 @@ hos_tidy_omitna = hos_tidy_omitna %>%
   mutate(log_losdays2 = log(losdays2)) %>%
   na.omit()
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + evisit+ cindex + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+summary(mult.fit)
 
-step(mult.fit, direction = 'both') 
-
-```
-
-```{r}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + cindex + mews + evisit + icu_flag + ageyear + gender + single + married + widowed + divorced + separated + civil_union + medicare + medicaid + private + white + black + asian + natv_amer_alaskan + natv_hawaii_pacf_isl + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_dummies) 
-
-z = step(mult.fit, direction = "both")
+z = step(mult.fit, direction = 'both') 
 summary(z)
 
 #mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
-#the two bp readings are correlated, diastolic is more significant
+#the two bp readings are correlated
 #of all the dummy variables, only insurancetype was significant
 
 ```
