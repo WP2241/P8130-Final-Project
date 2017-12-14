@@ -153,9 +153,18 @@ influence.measures(mult.fit2)
 
 ```
 
+#Vif
 ```{r}
 library(HH)
 vif(mult.fit2)
+```
+
+#Building the model without the outliers
+```{r}
+mult.fit3 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna_outl) 
+
+best(mult.fit3, nbest = 1)
+summary(mult.fit3)
 ```
 
 #Bootstrap
