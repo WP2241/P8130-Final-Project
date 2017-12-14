@@ -13,6 +13,7 @@ library(janitor)
 library(tidyverse)
 library(pander)
 library(leaps)
+library(HH)
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
 
@@ -135,6 +136,8 @@ best(mult.fit, nbest = 1)
 mult.fit2 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna) 
 
 best(mult.fit2, nbest = 1)
+
+vif(mult.fit2)
 ```
 
 #SLR
