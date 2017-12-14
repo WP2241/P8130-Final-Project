@@ -149,5 +149,13 @@ reg_hos<-lm(hos_tidy_omitna$log_losdays2~hos_tidy_omitna$is30dayreadmit)
 
 ```
 
+<<<<<<< HEAD
 
 
+=======
+#Residuals
+```{r}
+par(mfrow=c(2,2))
+plot(mult.fit2)
+```
+>>>>>>> 57b70150319a8a43adbc13446f4c1d09a0a70ec3
