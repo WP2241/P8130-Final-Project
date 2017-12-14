@@ -2,7 +2,9 @@
 title: "FinalProject"
 author: "Hyewon Choi"
 date: "12/8/2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 #Loading the data, observing duplicates
