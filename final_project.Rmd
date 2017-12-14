@@ -13,6 +13,9 @@ library(janitor)
 library(tidyverse)
 library(pander)
 library(leaps)
+library(HH)
+library(boot)
+
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
 
@@ -135,6 +138,8 @@ best(mult.fit, nbest = 1)
 mult.fit2 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna) 
 
 best(mult.fit2, nbest = 1)
+
+vif(mult.fit2)
 ```
 
 #Checking outliers
@@ -169,7 +174,26 @@ summary(mult.fit3)
 
 #Bootstrap
 ```{r}
+set.seed(1)
 
+
+boot.fn<-function(data, index){
+	return(coef(lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna, subset=index)))
+}
+boot.fn(hos_tidy_omitna,1:3502)
+
+
+set.seed(1)
+
+
+boot.fn(hos_tidy_omitna,sample(3502,3502,replace=T))
+
+
+
+boot(hos_tidy_omitna, boot.fn, 1000)
+
+# How does it compare to the original (non-bootstrap) estimates?
+summary(mult.fit2)
 ```
 
 
