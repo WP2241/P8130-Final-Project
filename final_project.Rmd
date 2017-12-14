@@ -102,7 +102,7 @@ hos_tidy_omitna = map_df(hos_tidy, fill_na)
 hos_tidy_omitna = hos_tidy_omitna %>%
   mutate(log_losdays2 = log(losdays2)) %>%
   na.omit()
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + evisit+ cindex + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + evisit+ cindex + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic + mews + icu_flag, data = hos_tidy_omitna) 
 summary(mult.fit)
 
 z = step(mult.fit, direction = 'both') 
@@ -116,7 +116,7 @@ summary(z)
 
 ### Criterion-based procedures
 ```{r criterion}
-mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic, data = hos_tidy_omitna) 
+mult.fit <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic + mews + icu_flag, data = hos_tidy_omitna) 
 
 best <- function(model, ...) 
 {
@@ -144,9 +144,10 @@ reg_hos<-lm(hos_tidy_omitna$log_losdays2~hos_tidy_omitna$is30dayreadmit)
 ```
 
 
-
 #Bootstrap
 ```{r}
 
 ```
+
+
 
