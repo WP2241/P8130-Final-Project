@@ -230,7 +230,7 @@ set.seed(1)
 
 
 boot.fn<-function(data, index){
-	return(coef(lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna, subset=index)))
+	return(coef(lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + temperature + bpsystolic , data = hos_tidy_omitna, subset=index)))
 }
 boot.fn(hos_tidy_omitna,1:3502)
 
