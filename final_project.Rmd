@@ -43,7 +43,7 @@ hos_tidy <- hos %>%
 
 #Data observations & building dummies
 ```{r observing data}
-hos_tidy %>%
+histogram <- hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram() +
     labs(title = "Figure 1: Length of Stay",
@@ -226,19 +226,19 @@ summary_bpdiastolic = hos_tidy_omitna %>%
             median = median(na.omit(bpdiastolic)))
 
 summary = rbind(summary_losdays2, summary_ageyear, summary_evisit, summary_bmi, summary_bpsystolic, summary_o2sat, summary_temperature, summary_heartrate, summary_respirationrate, summary_bpdiastolic)
-pander(summary)
+table_summary <-pander(summary)
 ```
   
 ### Stepwise selection
-```{r Stepwise selection}
+```{r Stepwise selection }
 hos_tidy_omitna = hos_tidy_omitna %>%
   mutate(log_losdays2 = log(losdays2)) %>%
   na.omit()
 mult.fit <- lm(log_losdays2 ~ is30dayreadmit + ageyear + evisit+ cindex + maritalstatus + insurancetype + race + respirationrate + o2sat + heartrate + bmi + temperature + bpsystolic + bpdiastolic + mews + icu_flag, data = hos_tidy_omitna) 
-summary(mult.fit)
+summary_multfit <-summary(mult.fit)
 
-z = step(mult.fit, direction = 'both') 
-summary(z)
+ z <- step(mult.fit, direction = 'both') 
+sum_z <- summary(z)
 
 #mews score based on bp, respiration, heartrate & temp and is a less significant variable than bp, resp $ temp 
 #the two bp readings are correlated
@@ -259,7 +259,7 @@ best <- function(model, ...)
   return(subsets)
 }  
 
-best(mult.fit, nbest = 1)
+best_fit <- best(mult.fit, nbest = 1)
 ```
 
 #Final model
@@ -267,9 +267,9 @@ best(mult.fit, nbest = 1)
 library(car)
 mult.fit2 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate + temperature + bpsystolic, data = hos_tidy_omitna) 
 
-best(mult.fit2, nbest = 1)
+best_Fit2 <- best(mult.fit2, nbest = 1)
 
-vif(mult.fit2)
+vif_multfit2 <- vif(mult.fit2)
 ```
 
 #Checking outliers
@@ -291,15 +291,15 @@ checking_influence <- influence.measures(mult.fit2)
 #Vif
 ```{r}
 library(HH)
-vif(mult.fit2)
+vif_multfit2 <- vif(mult.fit2)
 ```
 
 #Building the model without the outliers
 ```{r}
 mult.fit3 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate + temperature + bpsystolic, data = hos_tidy_omitna_outl) 
 
-best(mult.fit3, nbest = 1)
-summary(mult.fit3)
+best_fit3 <- best(mult.fit3, nbest = 1)
+summary_multfit3 <-summary(mult.fit3)
 ```
 
 #Bootstrap
@@ -310,20 +310,20 @@ set.seed(1)
 boot.fn<-function(data, index){
 	return(coef(lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + temperature + bpsystolic , data = hos_tidy_omitna_outl, subset=index)))
 }
-boot.fn(hos_tidy_omitna_outl,1:3431)
+boot_result <- boot.fn(hos_tidy_omitna_outl,1:3431)
 
 
 set.seed(1)
 
 
-boot.fn(hos_tidy_omitna_outl,sample(3431,3431,replace=T))
+boot_result2 <- boot.fn(hos_tidy_omitna_outl,sample(3431,3431,replace=T))
 
 
 
-boot(hos_tidy_omitna_outl, boot.fn, 1000)
+boot_result3 <- boot(hos_tidy_omitna_outl, boot.fn, 1000)
 
 # How does it compare to the original (non-bootstrap) estimates?
-summary(mult.fit3)
+summary_Boot_3<- summary(mult.fit3)
 ```
 
 
@@ -332,5 +332,5 @@ summary(mult.fit3)
 #Residuals
 ```{r}
 par(mfrow=c(2,2))
-plot(mult.fit2)
+plot_residuals <- plot(mult.fit2)
 ```
