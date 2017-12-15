@@ -35,16 +35,16 @@ hos_duplicates = merge(duplicates, hos)
 ```{r tidy data}
 hos_tidy <- hos %>% 
   clean_names() %>%
-  select(-loshours, -postalcode, -facilityname, -facilityzip) %>%
-  group_by(patientid) %>% 
-  filter(!duplicated(patientid)) %>%
+  dplyr::select(-loshours, -postalcode, -facilityname, -facilityzip) %>%
+  dplyr::group_by(patientid) %>% 
+  dplyr::filter(!duplicated(patientid)) %>%
   ungroup(patientid)
 ```
 
 #Summary Statistics
 ```{r summary statistics}
 summary_losdays2 = hos_tidy %>% 
-  select(losdays2) %>%
+  dplyr::select(losdays2) %>%
   summarize(variable = names(.), 
             n = n(), mean = mean(losdays2), 
             sd = sd(losdays2), 
@@ -53,7 +53,7 @@ summary_losdays2 = hos_tidy %>%
             median = median(losdays2))
 
 summary_ageyear = hos_tidy %>% 
-  select(ageyear) %>%
+  dplyr::select(ageyear) %>%
   summarize(variable = names(.), n = n(), 
             mean = mean(ageyear),
             sd = sd(ageyear),
@@ -62,7 +62,7 @@ summary_ageyear = hos_tidy %>%
             median = median(ageyear))
 
 summary_evisit = hos_tidy %>% 
-  select(evisit) %>%
+  dplyr::select(evisit) %>%
   summarize(variable = names(.),
             n = n(),
             mean = mean(evisit),
