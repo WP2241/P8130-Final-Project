@@ -2,7 +2,9 @@
 title: "FinalProject"
 author: "Hyewon Choi"
 date: "12/8/2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 #Loading the data, observing duplicates
@@ -15,6 +17,7 @@ library(pander)
 library(leaps)
 library(HH)
 library(boot)
+library(qboxplot)
 
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
@@ -73,7 +76,7 @@ pander(summary)
 ```
 
 #Data observations & building dummies
-```{r observing data & building dummies}
+```{r observing data}
 hos_tidy %>%
   ggplot(aes(x = losdays2)) + 
     geom_histogram() +
@@ -97,6 +100,55 @@ fill_na = function(x) {
 hos_tidy_omitna = map_df(hos_tidy, fill_na)
 
 
+```
+
+```{r}
+outliersZ <- function(data, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2) {
+    #compute standard deviation (sample version n = n [not n-1])
+    stdev <- sqrt(sum((data - mean(data, na.rm = T))^2, na.rm = T) / sum(!is.na(data)))
+    #compute absolute z values for each value
+    absZ <- abs(data - mean(data, na.rm = T)) / stdev
+    #subset data that has absZ greater than the zCutOff and replace them with replace
+    #can also replace with other values (such as max/mean of data)
+    data[absZ > zCutOff] <- replace 
+    
+    if (values == TRUE) {
+        return(round(absZ, digits)) #if values == TRUE, return z score for each value
+    } else {
+        return(round(data, digits)) #otherwise, return values with outliers replaced
+    }
+}
+
+hos_tidy_omitna$bmi = outliersZ(hos_tidy_omitna$bmi, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+hos_tidy_omitna$temperature = outliersZ(hos_tidy_omitna$temperature, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+hos_tidy_omitna$heartrate = outliersZ(hos_tidy_omitna$heartrate, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+hos_tidy_omitna$respirationrate = outliersZ(hos_tidy_omitna$respirationrate, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+hos_tidy_omitna$bpdiastolic = outliersZ(hos_tidy_omitna$bpdiastolic, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+hos_tidy_omitna$bpsystolic = outliersZ(hos_tidy_omitna$bpsystolic, zCutOff = 3.291, replace = NA, values = FALSE, digits = 2)
+
+## 99.9% cut off
+```
+
+
+```{r omit na again}
+fill_na = function(x) {
+  if (is.numeric(x)){
+   mean = mean(x, na.rm = TRUE)
+   x = replace(x, is.na(x), mean)
+  } else {x = x} 
+    
+  return(x)
+}
+
+hos_tidy_omitna = map_df(hos_tidy_omitna, fill_na)
+
+hos_tidy_omitna = hos_tidy_omitna %>%
+  filter(!o2sat > 100)
 ```
 
   
@@ -135,7 +187,7 @@ best(mult.fit, nbest = 1)
 
 #Final model
 ```{r}
-mult.fit2 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna) 
+mult.fit2 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate + temperature + bpsystolic, data = hos_tidy_omitna) 
 
 best(mult.fit2, nbest = 1)
 
@@ -152,7 +204,7 @@ stu_res<-rstandard(mult.fit2)
 outliers_y<-stu_res[abs(stu_res)>2.5]
 
 #removing outliers
-hos_tidy_omitna_outl <- hos_tidy_omitna[c(-6,-232,-277,-326,-370,-412,-514,-533,-559,-603,-628,-703,-770,-800,-821,-835,-850,-861,-878,-984,-1118,-1341,-1398,-1477,-1497, -1523,-1610,-1645,-1704,-1885,-2002,-2070,-2153,-2395,-2462,-2529,-2557,-2776,-2793,-2834,-2859,-2932,-3078,-3091,-3109,-3110, -3121, -3136, -3180, -3306, -3307, -3327, -3338, -3341, -3414),]
+hos_tidy_omitna_outl <- hos_tidy_omitna[c(-6,-232,-277,-368,-411,-514,-535,-557,-562,-604,-629,-704,-772,-824,-838,-852,-879,-982,-996,-1114,-1337,-1395,-1438,-1446, -1471,-1491,-1517,-1552,-1605,-1639,-1682,-1697,-1882,-2002,-2024,-2071,-2153,-2395,-2460,-2525,-2554,-2769,-2786,-2828,-2852, -2926, -3086, -3103, -3104, -3105, -3116, -3131, -3170,-3174,-3232,-3298,-3299,-3318,-3329,-3332, -3405),]
 
 influence.measures(mult.fit2)
 
@@ -166,7 +218,7 @@ vif(mult.fit2)
 
 #Building the model without the outliers
 ```{r}
-mult.fit3 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate  + bpsystolic, data = hos_tidy_omitna_outl) 
+mult.fit3 <- lm(log_losdays2 ~ is30dayreadmit + evisit+ cindex + ageyear +  respirationrate + heartrate + temperature + bpsystolic, data = hos_tidy_omitna_outl) 
 
 best(mult.fit3, nbest = 1)
 summary(mult.fit3)
@@ -190,10 +242,10 @@ boot.fn(hos_tidy_omitna,sample(3502,3502,replace=T))
 
 
 
-boot(hos_tidy_omitna, boot.fn, 1000)
+boot(hos_tidy_omitna_outl, boot.fn, 1000)
 
 # How does it compare to the original (non-bootstrap) estimates?
-summary(mult.fit2)
+summary(mult.fit3)
 ```
 
 
