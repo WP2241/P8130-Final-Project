@@ -41,110 +41,6 @@ hos_tidy <- hos %>%
   ungroup(patientid)
 ```
 
-#Summary Statistics
-```{r summary statistics}
-summary_losdays2 = hos_tidy %>% 
-  dplyr::select(losdays2) %>%
-  summarize(variable = names(.), 
-            n = n(), mean = mean(losdays2), 
-            sd = sd(losdays2), 
-            minimum = min(losdays2), 
-            maximum = max(losdays2), 
-            median = median(losdays2))
-
-summary_ageyear = hos_tidy %>% 
-  dplyr::select(ageyear) %>%
-  summarize(variable = names(.), n = n(), 
-            mean = mean(ageyear),
-            sd = sd(ageyear),
-            minimum = min(ageyear),
-            maximum = max(ageyear),
-            median = median(ageyear))
-
-summary_evisit = hos_tidy %>% 
- dplyr:: select(evisit) %>%
-  summarize(variable = names(.),
-            n = n(),
-            mean = mean(evisit),
-            sd = sd(evisit),
-            minimum = min(evisit),
-            maximum = max(evisit),
-            median = median(evisit))
-
-summary_bmi = hos_tidy %>% 
-  dplyr::select(bmi) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$bmi)),
-            mean = mean(na.omit(bmi)),
-            sd = sd(na.omit(bmi)),
-            minimum = min(na.omit(bmi)),
-            maximum = max(na.omit(bmi)),
-            median = median(na.omit(bmi)))
-
-summary_bpsystolic = hos_tidy %>% 
-  dplyr::select(bpsystolic) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$bpsystolic)),
-            mean = mean(na.omit(bpsystolic)),
-            sd = sd(na.omit(bpsystolic)),
-            minimum = min(na.omit(bpsystolic)),
-            maximum = max(na.omit(bpsystolic)),
-            median = median(na.omit(bpsystolic)))
-
-summary_o2sat = hos_tidy %>% 
-  dplyr::select(o2sat) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$o2sat)),
-            mean = mean(na.omit(o2sat)),
-            sd = sd(na.omit(o2sat)),
-            minimum = min(na.omit(o2sat)),
-            maximum = max(na.omit(o2sat)),
-            median = median(na.omit(o2sat)))
-
-summary_temperature = hos_tidy %>% 
-  dplyr::select(temperature) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$temperature)),
-            mean = mean(na.omit(temperature)),
-            sd = sd(na.omit(temperature)),
-            minimum = min(na.omit(temperature)),
-            maximum = max(na.omit(temperature)),
-            median = median(na.omit(temperature)))
-
-summary_heartrate = hos_tidy %>% 
-  dplyr::select(heartrate) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$heartrate)),
-            mean = mean(na.omit(heartrate)),
-            sd = sd(na.omit(heartrate)),
-            minimum = min(na.omit(heartrate)),
-            maximum = max(na.omit(heartrate)),
-            median = median(na.omit(heartrate)))
-
-summary_respirationrate = hos_tidy %>% 
-  dplyr::select(respirationrate) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$respirationrate)),
-            mean = mean(na.omit(respirationrate)),
-            sd = sd(na.omit(respirationrate)),
-            minimum = min(na.omit(respirationrate)),
-            maximum = max(na.omit(respirationrate)),
-            median = median(na.omit(respirationrate)))
-
-summary_bpdiastolic = hos_tidy %>% 
-  dplyr::select(bpdiastolic) %>%
-  summarize(variable = names(.),
-            n = n()-sum(is.na(hos_tidy$bpdiastolic)),
-            mean = mean(na.omit(bpdiastolic)),
-            sd = sd(na.omit(bpdiastolic)),
-            minimum = min(na.omit(bpdiastolic)),
-            maximum = max(na.omit(bpdiastolic)),
-            median = median(na.omit(bpdiastolic)))
-
-summary = rbind(summary_losdays2, summary_ageyear, summary_evisit, summary_bmi, summary_bpsystolic, summary_o2sat, summary_temperature, summary_heartrate, summary_respirationrate, summary_bpdiastolic)
-pander(summary)
-```
-
 #Data observations & building dummies
 ```{r observing data}
 hos_tidy %>%
@@ -221,6 +117,109 @@ hos_tidy_omitna = hos_tidy_omitna %>%
   filter(!o2sat > 100)
 ```
 
+#Summary Statistics
+```{r summary statistics}
+summary_losdays2 = hos_tidy_omitna %>% 
+  dplyr::select(losdays2) %>%
+  summarize(variable = names(.), 
+            n = n(), mean = mean(losdays2), 
+            sd = sd(losdays2), 
+            minimum = min(losdays2), 
+            maximum = max(losdays2), 
+            median = median(losdays2))
+
+summary_ageyear = hos_tidy_omitna %>% 
+  dplyr::select(ageyear) %>%
+  summarize(variable = names(.), n = n(), 
+            mean = mean(ageyear),
+            sd = sd(ageyear),
+            minimum = min(ageyear),
+            maximum = max(ageyear),
+            median = median(ageyear))
+
+summary_evisit = hos_tidy_omitna %>% 
+ dplyr:: select(evisit) %>%
+  summarize(variable = names(.),
+            n = n(),
+            mean = mean(evisit),
+            sd = sd(evisit),
+            minimum = min(evisit),
+            maximum = max(evisit),
+            median = median(evisit))
+
+summary_bmi = hos_tidy_omitna %>% 
+  dplyr::select(bmi) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$bmi)),
+            mean = mean(na.omit(bmi)),
+            sd = sd(na.omit(bmi)),
+            minimum = min(na.omit(bmi)),
+            maximum = max(na.omit(bmi)),
+            median = median(na.omit(bmi)))
+
+summary_bpsystolic = hos_tidy_omitna %>% 
+  dplyr::select(bpsystolic) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$bpsystolic)),
+            mean = mean(na.omit(bpsystolic)),
+            sd = sd(na.omit(bpsystolic)),
+            minimum = min(na.omit(bpsystolic)),
+            maximum = max(na.omit(bpsystolic)),
+            median = median(na.omit(bpsystolic)))
+
+summary_o2sat = hos_tidy_omitna %>% 
+  dplyr::select(o2sat) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$o2sat)),
+            mean = mean(na.omit(o2sat)),
+            sd = sd(na.omit(o2sat)),
+            minimum = min(na.omit(o2sat)),
+            maximum = max(na.omit(o2sat)),
+            median = median(na.omit(o2sat)))
+
+summary_temperature = hos_tidy_omitna %>% 
+  dplyr::select(temperature) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$temperature)),
+            mean = mean(na.omit(temperature)),
+            sd = sd(na.omit(temperature)),
+            minimum = min(na.omit(temperature)),
+            maximum = max(na.omit(temperature)),
+            median = median(na.omit(temperature)))
+
+summary_heartrate = hos_tidy_omitna %>% 
+  dplyr::select(heartrate) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$heartrate)),
+            mean = mean(na.omit(heartrate)),
+            sd = sd(na.omit(heartrate)),
+            minimum = min(na.omit(heartrate)),
+            maximum = max(na.omit(heartrate)),
+            median = median(na.omit(heartrate)))
+
+summary_respirationrate = hos_tidy_omitna %>% 
+  dplyr::select(respirationrate) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$respirationrate)),
+            mean = mean(na.omit(respirationrate)),
+            sd = sd(na.omit(respirationrate)),
+            minimum = min(na.omit(respirationrate)),
+            maximum = max(na.omit(respirationrate)),
+            median = median(na.omit(respirationrate)))
+
+summary_bpdiastolic = hos_tidy_omitna %>% 
+  dplyr::select(bpdiastolic) %>%
+  summarize(variable = names(.),
+            n = n()-sum(is.na(hos_tidy$bpdiastolic)),
+            mean = mean(na.omit(bpdiastolic)),
+            sd = sd(na.omit(bpdiastolic)),
+            minimum = min(na.omit(bpdiastolic)),
+            maximum = max(na.omit(bpdiastolic)),
+            median = median(na.omit(bpdiastolic)))
+
+summary = rbind(summary_losdays2, summary_ageyear, summary_evisit, summary_bmi, summary_bpsystolic, summary_o2sat, summary_temperature, summary_heartrate, summary_respirationrate, summary_bpdiastolic)
+pander(summary)
+```
   
 ### Stepwise selection
 ```{r Stepwise selection}
