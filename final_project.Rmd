@@ -18,6 +18,7 @@ library(leaps)
 library(HH)
 library(boot)
 library(qboxplot)
+library(car)
 
 
 hos = read_excel("./data/GHProject_Dataset.xlsx")
@@ -44,7 +45,7 @@ hos_tidy <- hos %>%
 #Summary Statistics
 ```{r summary statistics}
 summary_losdays2 = hos_tidy %>% 
-  dplyr::select(losdays2) %>%
+  select(losdays2) %>%
   summarize(variable = names(.), 
             n = n(), mean = mean(losdays2), 
             sd = sd(losdays2), 
@@ -53,7 +54,7 @@ summary_losdays2 = hos_tidy %>%
             median = median(losdays2))
 
 summary_ageyear = hos_tidy %>% 
-  dplyr::select(ageyear) %>%
+  select(ageyear) %>%
   summarize(variable = names(.), n = n(), 
             mean = mean(ageyear),
             sd = sd(ageyear),
@@ -62,7 +63,7 @@ summary_ageyear = hos_tidy %>%
             median = median(ageyear))
 
 summary_evisit = hos_tidy %>% 
- dplyr:: select(evisit) %>%
+  select(evisit) %>%
   summarize(variable = names(.),
             n = n(),
             mean = mean(evisit),
@@ -72,7 +73,7 @@ summary_evisit = hos_tidy %>%
             median = median(evisit))
 
 summary_bmi = hos_tidy %>% 
-  dplyr::select(bmi) %>%
+  select(bmi) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$bmi)),
             mean = mean(na.omit(bmi)),
@@ -82,7 +83,7 @@ summary_bmi = hos_tidy %>%
             median = median(na.omit(bmi)))
 
 summary_bpsystolic = hos_tidy %>% 
-  dplyr::select(bpsystolic) %>%
+  select(bpsystolic) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$bpsystolic)),
             mean = mean(na.omit(bpsystolic)),
@@ -92,7 +93,7 @@ summary_bpsystolic = hos_tidy %>%
             median = median(na.omit(bpsystolic)))
 
 summary_o2sat = hos_tidy %>% 
-  dplyr::select(o2sat) %>%
+  select(o2sat) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$o2sat)),
             mean = mean(na.omit(o2sat)),
@@ -102,7 +103,7 @@ summary_o2sat = hos_tidy %>%
             median = median(na.omit(o2sat)))
 
 summary_temperature = hos_tidy %>% 
-  dplyr::select(temperature) %>%
+  select(temperature) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$temperature)),
             mean = mean(na.omit(temperature)),
@@ -112,7 +113,7 @@ summary_temperature = hos_tidy %>%
             median = median(na.omit(temperature)))
 
 summary_heartrate = hos_tidy %>% 
-  dplyr::select(heartrate) %>%
+  select(heartrate) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$heartrate)),
             mean = mean(na.omit(heartrate)),
@@ -122,7 +123,7 @@ summary_heartrate = hos_tidy %>%
             median = median(na.omit(heartrate)))
 
 summary_respirationrate = hos_tidy %>% 
-  dplyr::select(respirationrate) %>%
+  select(respirationrate) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$respirationrate)),
             mean = mean(na.omit(respirationrate)),
@@ -132,7 +133,7 @@ summary_respirationrate = hos_tidy %>%
             median = median(na.omit(respirationrate)))
 
 summary_bpdiastolic = hos_tidy %>% 
-  dplyr::select(bpdiastolic) %>%
+  select(bpdiastolic) %>%
   summarize(variable = names(.),
             n = n()-sum(is.na(hos_tidy$bpdiastolic)),
             mean = mean(na.omit(bpdiastolic)),
